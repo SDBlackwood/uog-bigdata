@@ -11,9 +11,9 @@ public class MyMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 	private Text _key = new Text();
 	private IntWritable _value = new IntWritable();
 	@Override
-	protected void map(LongWritable key, Text value, Context context) throws
-	IOException, InterruptedException {
+	protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 		StringTokenizer tokenizer = new StringTokenizer(value.toString(), "\n");
+
 		while (tokenizer.hasMoreTokens()) {
 			String line = tokenizer.nextToken();
 			int sep = line.indexOf(' ');

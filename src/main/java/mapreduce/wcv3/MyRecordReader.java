@@ -37,8 +37,8 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 		this.end = split.getStart() + split.getLength();
 		this.fsin.seek(this.start);
 
-		if (this.start != 0)
-			readRecord(false);
+//		if (this.start != 0)
+			//readRecord(false);
 	}
 
 	private boolean readRecord(boolean withinBlock) throws IOException {

@@ -39,5 +39,13 @@
           <version>RELEASE</version>
           <scope>test</scope>
       </dependency>
+      <dependency>
+          <groupId>org.apache.mrunit</groupId>
+          <artifactId>mrunit</artifactId>
+          <version>RELEASE</version>
+          <scope>test</scope>
+          <classifier>hadoop2</classifier>
+      </dependency>
+
   </dependencies>
 </project>

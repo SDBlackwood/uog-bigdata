@@ -35,9 +35,9 @@ public class WordCount extends Configured implements Tool {
 		job.setMapOutputValueClass(IntWritable.class);
 		job.setReducerClass(MyReducer.class);
 		job.setCombinerClass(MyReducer.class);
+
 		FileInputFormat.setInputPaths(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(job.getJobName() +
-				"_output"));
+		FileOutputFormat.setOutputPath(job, new Path(job.getJobName() + "_output"));
 		return job.waitForCompletion(true) ? 0 : 1;
 	}
 

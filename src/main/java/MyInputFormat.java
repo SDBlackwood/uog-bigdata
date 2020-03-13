@@ -1,6 +1,6 @@
-import mapreduce.wcv3.MyRecordReader;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
@@ -14,4 +14,5 @@ public class MyInputFormat extends FileInputFormat<LongWritable, Text> {
 			throws IOException, InterruptedException {
 		return new MyRecordReader();
 	}
+
 }
