@@ -34,7 +34,7 @@ public class TestWikiIndexer {
     }
 
     @Test
-    public void testMapper() throws IOException, InterruptedException {
+    public void testRecordReader() throws IOException, InterruptedException {
         Configuration conf = new Configuration(false);
         conf.set("fs.default.name", "file:///");
 
