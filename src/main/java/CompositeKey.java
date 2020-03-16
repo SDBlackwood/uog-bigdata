@@ -6,6 +6,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class CompositeKey implements WritableComparable<CompositeKey> {
 
@@ -97,6 +98,20 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
         } else if (this.keyType == KeyType.TERM) {
             this.term = dataInput.readUTF();
         }
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CompositeKey)) return false;
+        CompositeKey that = (CompositeKey) o;
+        return getKeyType() == that.getKeyType() &&
+                Objects.equals(getDocumentId(), that.getDocumentId()) &&
+                Objects.equals(getTerm(), that.getTerm());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getKeyType(), getDocumentId(), getTerm());
     }
 }
