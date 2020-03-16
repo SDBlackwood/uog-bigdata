@@ -1,10 +1,33 @@
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.WritableComparable;
 
-public class CompositeKey {
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class CompositeKey implements WritableComparable<CompositeKey> {
 
     enum KeyType {
-        DOCUMENT,
-        TERM
+        DOCUMENT('d'),
+        TERM('t');
+
+        private final char code;
+
+        KeyType(final char code) {
+            this.code = code;
+        }
+
+        public static KeyType fromCode(char code) {
+            if (code == 'd') return KeyType.DOCUMENT;
+            else return KeyType.TERM;
+        }
+
+        public char getCode() {
+            return this.code;
+        }
+
     }
 
     private KeyType keyType;
@@ -13,8 +36,22 @@ public class CompositeKey {
 
     public CompositeKey(KeyType keyType, LongWritable documentId, String term) {
         this.keyType = keyType;
-        this.documentId = documentId;
+
+        if (keyType == KeyType.DOCUMENT) {
+            this.documentId = documentId;
+        } else if (keyType == KeyType.TERM) {
+            this.term = term;
+        }
+    }
+
+    public CompositeKey(String term) {
+        this.keyType = KeyType.TERM;
         this.term = term;
+    }
+
+    public CompositeKey(LongWritable documentId) {
+        this.keyType = KeyType.DOCUMENT;
+        this.documentId = documentId;
     }
 
     public KeyType getKeyType() {
@@ -27,5 +64,39 @@ public class CompositeKey {
 
     public String getTerm() {
         return term;
+    }
+
+    @Override
+    public int compareTo(CompositeKey o) {
+        if (this.getKeyType() == KeyType.DOCUMENT && o.getKeyType() == KeyType.TERM) {
+            return -1;
+        } else if (this.getKeyType() == KeyType.TERM && o.getKeyType() == KeyType.DOCUMENT) {
+            return 1;
+        } else if (this.getKeyType() == KeyType.TERM && o.getKeyType() == KeyType.TERM) {
+            return this.getTerm().compareTo(o.getTerm());
+        } else {
+            return this.getDocumentId().compareTo(o.getDocumentId());
+        }
+    }
+
+    @Override
+    public void write(DataOutput dataOutput) throws IOException {
+        dataOutput.writeChar(this.getKeyType().getCode());
+        if (this.getKeyType() == KeyType.DOCUMENT) {
+            dataOutput.writeLong(this.getDocumentId().get());
+        } else {
+            dataOutput.writeUTF(this.getTerm());
+        }
+    }
+
+    @Override
+    public void readFields(DataInput dataInput) throws IOException {
+        this.keyType = KeyType.fromCode(dataInput.readChar());
+        if (this.keyType == KeyType.DOCUMENT) {
+            this.documentId = new LongWritable(dataInput.readLong());
+        } else if (this.keyType == KeyType.TERM) {
+            this.term = dataInput.readUTF();
+        }
+
     }
 }
