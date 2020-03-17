@@ -54,7 +54,7 @@ public class MyMapper extends Mapper<LongWritable, Text, CompositeKey, IdCountPa
 
 		for (CompositeKey termKey : termCounts.keySet()) {
 			context.write(termKey, new IdCountPair(key, termCounts.get(termKey)));
-			System.out.println(termKey);
+			//System.out.println(termKey);
 		}
 	}
 

@@ -23,14 +23,35 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import java.io.File;
 
-public class TestWikiIndexer {
-    MapDriver<LongWritable, Text, Text, IntWritable> mapDriver;
-    ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
-    MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
+public class TestRecordReader {
+
+    private MapDriver<LongWritable, Text, Text, Text> mapDriver;
+    private ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
+    private MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
 
     @Before
     public void setUp() {
+        MyMapper mapper = new MyMapper();
+        MyReducer reducer = new MyReducer();
+        MapDriver mapDriver = MapDriver.newMapDriver(mapper);
+        ReduceDriver reduceDriver =  ReduceDriver.newReduceDriver(reducer);
+        MapReduceDriver mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper,reducer);
 
+        mapDriver.getConfiguration().set("files", "src/main/resources/stopword-list.txt");
+    }
+
+    @Test
+    public void testMapper() throws IOException {
+
+        final LongWritable inputKey = new LongWritable(0);
+        final Text inputValue = new Text("[[A]]\nA Test\n");
+
+        final Text outputKey = new Text("groceries");
+        final Text outputValue = new Text("www.kroger.com");
+
+        mapDriver.withInput(inputKey, inputValue);
+        mapDriver.withOutput(outputKey, outputValue);
+        mapDriver.runTest();
     }
 
     @Test
@@ -38,7 +59,7 @@ public class TestWikiIndexer {
         Configuration conf = new Configuration(false);
         conf.set("fs.default.name", "file:///");
 
-        File testFile = new File("src/test/java/test.txt");
+        File testFile = new File("src/test/java/record_reader.txt");
         Path path = new Path(testFile.getAbsoluteFile().toURI());
         FileSplit split = new FileSplit(path, 0, testFile.length(), null);
 
@@ -47,10 +68,18 @@ public class TestWikiIndexer {
         RecordReader reader = inputFormat.createRecordReader(split, context);
 
         reader.initialize(split, context);
-        reader.nextKeyValue();
+        boolean result = reader.nextKeyValue();
 
         Text expected = new Text(new String ("[[A]]\nA Test\n"));
-        Assert.assertEquals(new LongWritable(14),reader.getCurrentKey());
+       // Assert.assertEquals(new LongWritable(14),reader.getCurrentKey());
+        Assert.assertEquals(expected,reader.getCurrentValue());
+        Assert.assertEquals(true, result);
+
+        reader.nextKeyValue();
+        reader.nextKeyValue();
+
+        expected = new Text(new String ("[[B]]\nB Test\n"));
+        Assert.assertEquals(new LongWritable(25),reader.getCurrentKey());
         Assert.assertEquals(expected,reader.getCurrentValue());
 
     }

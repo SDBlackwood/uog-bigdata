@@ -1,9 +1,7 @@
-import com.clearspring.analytics.stream.membership.DataOutputBuffer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hdfs.util.ByteArray;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -11,78 +9,88 @@ import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.util.LineReader;
-
+import java.util.regex.Pattern;
 import java.io.IOException;
-
+import com.clearspring.analytics.stream.membership.DataOutputBuffer;
 
 public class MyRecordReader extends RecordReader<LongWritable, Text> {
 
-	private static final byte[] recordSeparator = "[[".getBytes();
-	private FSDataInputStream fsin;
-	private long start, end;
-	private boolean stillInChunk = true;
-	private DataOutputBuffer buffer = new DataOutputBuffer();
+	final String pattern = ".*\\[\\[.*\\]\\].*";
 	private LongWritable key = new LongWritable();
 	private Text value = new Text();
-
+	private FSDataInputStream fsin;
+	private LineReader lineReader;
+	private DataOutputBuffer buffer = new DataOutputBuffer();
+	private boolean isRecordFinished = false;
+	private long position = 0;
+	private int isEnd = 0;
+	private long start,end;
 
 	@Override
 	public void initialize(InputSplit inputSplit, TaskAttemptContext context) throws IOException {
-
-		Configuration job = context.getConfiguration();
 
 		FileSplit split = (FileSplit) inputSplit;
 		Configuration conf = context.getConfiguration();
 		Path path = split.getPath();
 		FileSystem fs = path.getFileSystem(conf);
-
 		this.fsin = fs.open(path);
-		fs.close();
+		this.lineReader = new LineReader(this.fsin, conf);
 		this.start = split.getStart();
 		this.end = split.getStart() + split.getLength();
-		this.fsin.seek(this.start);
+		fs.close();
 	}
 
-	private boolean readRecord(boolean withinBlock) throws IOException {
-		int articles = 0, symbolCount = 0, b;
-
-		while (true) {
-
-			b = this.fsin.read();
-
-			if (b == -1)
-				return false;
-			if (b == recordSeparator[symbolCount] && withinBlock){
-				if (articles < 1){
-					this.buffer.write(b);
-				}else{
-					return false;
-				}
-				if (++symbolCount == recordSeparator.length){
-					symbolCount = 0;
-					articles++;
-				}
-			}else{
-				this.buffer.write(b);
-			}
-
-
-		}
-	}
-
+	/**
+	 *
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public boolean nextKeyValue() throws IOException {
 
-		if (!this.stillInChunk)
-			return false;
-		boolean status = readRecord(true);
-		this.value = new Text();
-		this.key.set(this.fsin.getPos());
-		this.value.set(this.buffer.getData(), 0, this.buffer.getLength());
-		this.buffer.reset();
-		if (!status)
-			this.stillInChunk = false;
-		return false;
+		Text content = new Text();
+		boolean skipFirst = true;
+
+		while(!isRecordFinished){
+
+			// Skip the first line as we want to stop at the end
+			// of the second article title e.g [[Title]]
+			if(skipFirst){
+				this.lineReader.readLine(content);
+				this.buffer.write(content.getBytes());
+				//  add a new line as it removed in the linereadedr
+				this.buffer.write("\n".getBytes());
+				skipFirst = false;
+				continue;
+			}
+
+			isEnd = this.lineReader.readLine(content);
+
+			if (isEnd == -1){
+				// We have reached end of input
+				// Return false to stop processing this split
+				this.fsin.close();
+				this.buffer.reset();
+				return false;
+
+				// TODO: There is an edge case here where a record
+				// is between the end of one split and the start of
+				// another.  Need to handle for this.
+			}
+
+			// If we find a match then we want to emit the position
+			// We got up to previously, not the current line
+			if(isRecordFinished = Pattern.matches(pattern, content.toString()) != false){
+				this.buffer.write(content.getBytes());
+				this.buffer.write("\n".getBytes());
+				position = this.fsin.getPos();
+			}
+		}
+
+		this.key.set(position);
+		this.value.set(this.buffer.getData());
+
+		return true;
 	}
 
 	@Override
