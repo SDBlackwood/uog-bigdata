@@ -23,12 +23,12 @@ public class MyIndexer extends Configured implements Tool {
         Job job = Job.getInstance(myconf, "WikiIndex-v0");
 
         job.setJarByClass(MyIndexer.class);
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(MyInputFormat.class);
         job.setOutputFormatClass(MyOutputFormat.class);
 
         job.setMapperClass(MyMapper.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(IntWritable.class);
+        job.setMapOutputKeyClass(CompositeKey.class);
+        job.setMapOutputValueClass(IdCountPair.class);
         job.setReducerClass(MyReducer.class);
         job.setCombinerClass(MyReducer.class);
 //        job.setGroupingComparatorClass(MyGroupComparator.class);
