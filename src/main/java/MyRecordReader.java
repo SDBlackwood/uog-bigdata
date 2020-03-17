@@ -80,7 +80,8 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 
 			// If we find a match then we want to emit the position
 			// We got up to previously, not the current line
-			if(isRecordFinished = Pattern.matches(pattern, content.toString()) != false){
+			isRecordFinished = Pattern.matches(pattern, content.toString());
+			if(!isRecordFinished){
 				this.buffer.write(content.getBytes());
 				this.buffer.write("\n".getBytes());
 				position = this.fsin.getPos();
