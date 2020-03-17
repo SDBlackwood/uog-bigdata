@@ -9,9 +9,15 @@ public class IdCountPair implements Writable {
     private LongWritable documentId;
     private int count;
 
+    private static String stringSeparator = "|";
+
     IdCountPair(LongWritable documentId, int count) {
         this.documentId = documentId;
         this.count = count;
+    }
+
+    public String toString () {
+        return documentId.toString() + stringSeparator + count;
     }
 
     @Override

@@ -26,7 +26,8 @@ public class MyIndexer extends Configured implements Tool {
         job.setJarByClass(MyIndexer.class);
         job.setInputFormatClass(MyInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
-        job.setMapOutputKeyClass();
+        job.setOutputKeyClass(CompositeKey.class);
+        job.setOutputValueClass(Iterable.class);
 
         job.setMapperClass(MyMapper.class);
         job.setMapOutputKeyClass(CompositeKey.class);
