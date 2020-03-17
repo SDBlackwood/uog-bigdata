@@ -16,7 +16,7 @@ public class MyMapper extends Mapper<LongWritable, Text, CompositeKey, IdCountPa
 
 	@Override
 	protected void setup(Context context) throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(new FileReader("stopword-list.txt"));
+		BufferedReader bufferedReader = new BufferedReader(new FileReader("src/main/resources/stopword-list.txt"));
 		String word;
 
 		while((word = bufferedReader.readLine()) != null) {
@@ -54,15 +54,17 @@ public class MyMapper extends Mapper<LongWritable, Text, CompositeKey, IdCountPa
 
 		for (CompositeKey termKey : termCounts.keySet()) {
 			context.write(termKey, new IdCountPair(key, termCounts.get(termKey)));
+			System.out.println(termKey);
 		}
 	}
 
 	private String processWord(String word) {
-		if (this.stopwords.contains(word)) {
+		String normalisedWord = this.stripWord(word.toLowerCase());
+		if (this.stopwords.contains(normalisedWord)) {
 			return null;
 		}
 
-		return this.porterStemmer.stem(this.stripWord(word.toLowerCase()));
+		return this.porterStemmer.stem(normalisedWord);
 	}
 
 	private String stripWord(String word) {

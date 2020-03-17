@@ -16,6 +16,8 @@ public class IdCountPair implements Writable {
         this.count = count;
     }
 
+    IdCountPair() {}
+
     public String toString () {
         return documentId.toString() + stringSeparator + count;
     }

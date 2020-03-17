@@ -6,12 +6,16 @@ import org.apache.hadoop.mapreduce.Reducer;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class MyReducer extends Reducer<LongWritable, IdCountPair, LongWritable, Iterable<IdCountPair>> {
+public class MyReducer extends Reducer<CompositeKey, IdCountPair, CompositeKey, Text> {
 
 	@Override
-	protected void reduce(LongWritable key, Iterable<IdCountPair> values, Context
+	protected void reduce(CompositeKey key, Iterable<IdCountPair> values, Context
 			context) throws IOException, InterruptedException {
+		StringBuilder output = new StringBuilder();
 
-		context.write(key, values);
+		for (IdCountPair pair : values) {
+			output.append(pair.toString()).append(" ");
+		}
+		context.write(key, new Text(output.toString()));
 	}
 }

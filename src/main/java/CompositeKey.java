@@ -47,6 +47,10 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
         }
     }
 
+    public CompositeKey() {
+
+    }
+
     public CompositeKey(String term) {
         this.keyType = KeyType.TERM;
         this.term = term;
