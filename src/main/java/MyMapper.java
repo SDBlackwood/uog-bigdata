@@ -40,7 +40,7 @@ public class MyMapper extends Mapper<LongWritable, Text, CompositeKey, IdCountPa
 
 			CompositeKey termKey = new CompositeKey(processedWord);
 
-			int count = termCounts.getOrDefault(termKey, 0);
+			int count = termCounts.getOrDefault(termKey, 1);
 			termCounts.put(termKey, count + 1);
 
 			documentLength++;
