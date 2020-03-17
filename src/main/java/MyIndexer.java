@@ -26,7 +26,7 @@ public class MyIndexer extends Configured implements Tool {
         Job job = Job.getInstance(myconf, "WikiIndex-v0");
 
         job.setJarByClass(MyIndexer.class);
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(MyInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setOutputKeyClass(CompositeKey.class);
         job.setOutputValueClass(Text.class);

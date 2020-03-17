@@ -20,12 +20,10 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 	private static final byte[] recordSeparator = "[[".getBytes();
 	private FSDataInputStream fsin;
 	private long start, end;
-	private long position;
 	private boolean stillInChunk = true;
 	private DataOutputBuffer buffer = new DataOutputBuffer();
 	private LongWritable key = new LongWritable();
 	private Text value = new Text();
-	private LineReader lineReader;
 
 
 	@Override
@@ -43,16 +41,10 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 		this.start = split.getStart();
 		this.end = split.getStart() + split.getLength();
 		this.fsin.seek(this.start);
-		this.position = this.start;
-		this.lineReader = new LineReader(this.fsin, conf, recordSeparator);
-
-		if (this.start != 0)
-			readRecord(false);
 	}
 
 	private boolean readRecord(boolean withinBlock) throws IOException {
 		int articles = 0, symbolCount = 0, b;
-		int[] temp = new int[3];
 
 		while (true) {
 
@@ -64,7 +56,6 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 				if (articles < 1){
 					this.buffer.write(b);
 				}else{
-					articles = 0;
 					return false;
 				}
 				if (++symbolCount == recordSeparator.length){
