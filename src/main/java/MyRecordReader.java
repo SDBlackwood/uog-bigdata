@@ -72,6 +72,7 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 				// Return false to stop processing this split
 				this.fsin.close();
 				this.buffer.reset();
+				this.position = 0;
 				return false;
 
 				// TODO: There is an edge case here where a record
@@ -92,6 +93,7 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 		this.key.set(position);
 		this.value.set(this.buffer.getData());
 		this.buffer.reset();
+
 		return true;
 	}
 
