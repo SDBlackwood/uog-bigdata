@@ -48,10 +48,11 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 	@Override
 	public boolean nextKeyValue() throws IOException {
 
-		Text content = new Text();
+
 		boolean skipFirst = true;
 
 		while(!isRecordFinished){
+			Text content = new Text();
 
 			// Skip the first line as we want to stop at the end
 			// of the second article title e.g [[Title]]
@@ -80,8 +81,8 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 
 			// If we find a match then we want to emit the position
 			// We got up to previously, not the current line
-			isRecordFinished = Pattern.matches(pattern, content.toString());
-			if(!isRecordFinished){
+			this.isRecordFinished = Pattern.matches(pattern, content.toString());
+			if(!this.isRecordFinished){
 				this.buffer.write(content.getBytes());
 				this.buffer.write("\n".getBytes());
 				position = this.fsin.getPos();
@@ -90,7 +91,7 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 
 		this.key.set(position);
 		this.value.set(this.buffer.getData());
-
+		this.buffer.reset();
 		return true;
 	}
 
