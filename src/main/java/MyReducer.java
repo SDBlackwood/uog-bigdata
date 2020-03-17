@@ -1,19 +1,17 @@
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
 import java.util.Iterator;
 
-public class MyReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
-	private IntWritable _value = new IntWritable();
+public class MyReducer extends Reducer<LongWritable, IdCountPair, LongWritable, Iterable<IdCountPair>> {
+
 	@Override
-	protected void reduce(Text key, Iterable<IntWritable> values, Context
+	protected void reduce(LongWritable key, Iterable<IdCountPair> values, Context
 			context) throws IOException, InterruptedException {
-		int sum = 0;
-		for (Iterator<IntWritable> it = values.iterator(); it.hasNext();)
-			sum += it.next().get();
-		this._value.set(sum);
-		context.write(key, this._value);
+
+		context.write(key, values);
 	}
 }
