@@ -40,19 +40,23 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
 
         if (keyType == KeyType.DOCUMENT) {
             this.documentId = documentId;
+            this.term = null;
         } else if (keyType == KeyType.TERM) {
             this.term = term;
+            this.documentId = null;
         }
     }
 
     public CompositeKey(String term) {
         this.keyType = KeyType.TERM;
         this.term = term;
+        this.documentId = null;
     }
 
     public CompositeKey(LongWritable documentId) {
         this.keyType = KeyType.DOCUMENT;
         this.documentId = documentId;
+        this.term = null;
     }
 
     public KeyType getKeyType() {
@@ -65,6 +69,12 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
 
     public String getTerm() {
         return term;
+    }
+
+    public String toString() {
+        return this.keyType.code +
+                (this.term != null ? this.term : "") +
+                (this.documentId != null ? this.documentId : "");
     }
 
     @Override

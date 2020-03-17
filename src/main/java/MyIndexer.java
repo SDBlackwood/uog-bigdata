@@ -5,6 +5,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -24,7 +25,8 @@ public class MyIndexer extends Configured implements Tool {
 
         job.setJarByClass(MyIndexer.class);
         job.setInputFormatClass(MyInputFormat.class);
-        job.setOutputFormatClass(MyOutputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+        job.setMapOutputKeyClass();
 
         job.setMapperClass(MyMapper.class);
         job.setMapOutputKeyClass(CompositeKey.class);
