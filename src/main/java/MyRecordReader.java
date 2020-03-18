@@ -57,6 +57,8 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 			// Skip the first line as we want to stop at the end
 			// of the second article title e.g [[Title]]
 			if(skipFirst){
+				// Keep track of the position we started at
+				start = position;
 				this.lineReader.readLine(content);
 				this.buffer.write(content.getBytes());
 				//  add a new line as it removed in the linereadedr
@@ -72,7 +74,6 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 				// Return false to stop processing this split
 				this.fsin.close();
 				this.buffer.reset();
-				this.position = 0;
 				return false;
 
 				// TODO: There is an edge case here where a record
@@ -90,9 +91,10 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 			}
 		}
 
-		this.key.set(position);
+		this.key.set(start);
 		this.value.set(this.buffer.getData());
 		this.buffer.reset();
+		isRecordFinished = false;
 
 		return true;
 	}
