@@ -40,7 +40,7 @@ public class MyMapper extends Mapper<LongWritable, Text, CompositeKey, IdCountPa
 
 			CompositeKey termKey = new CompositeKey(processedWord);
 
-			int count = termCounts.getOrDefault(termKey, 1);
+			int count = termCounts.getOrDefault(termKey, 0);
 			termCounts.put(termKey, count + 1);
 
 			documentLength++;
@@ -54,7 +54,6 @@ public class MyMapper extends Mapper<LongWritable, Text, CompositeKey, IdCountPa
 
 		for (CompositeKey termKey : termCounts.keySet()) {
 			context.write(termKey, new IdCountPair(key, termCounts.get(termKey)));
-			//System.out.println(termKey);
 		}
 	}
 
