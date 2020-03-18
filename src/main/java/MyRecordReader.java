@@ -69,7 +69,7 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 
 			isEnd = this.lineReader.readLine(content);
 
-			if (isEnd == -1){
+			if (isEnd == 0){
 				// We have reached end of input
 				// Return false to stop processing this split
 				this.fsin.close();
