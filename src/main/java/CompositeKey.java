@@ -76,9 +76,15 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
     }
 
     public String toString() {
-        return this.keyType.code +
-                (this.term != null ? this.term : "") +
-                (this.documentId != null ? this.documentId : "");
+        StringBuilder output = new StringBuilder();
+        output.append(this.keyType.code);
+        output.append('|');
+        if (this.keyType == KeyType.TERM) {
+            output.append(this.term);
+        } else {
+            output.append(this.documentId);
+        }
+        return output.toString();
     }
 
     @Override

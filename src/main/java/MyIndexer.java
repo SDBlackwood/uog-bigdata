@@ -35,7 +35,6 @@ public class MyIndexer extends Configured implements Tool {
         job.setMapOutputKeyClass(CompositeKey.class);
         job.setMapOutputValueClass(IdCountPair.class);
         job.setReducerClass(MyReducer.class);
-        job.setCombinerClass(MyReducer.class);
         job.setGroupingComparatorClass(MyGroupComparator.class);
 //        job.setSortComparatorClass(MySortComparator.class);
 

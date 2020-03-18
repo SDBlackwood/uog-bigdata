@@ -6,7 +6,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class MyReducer extends Reducer<CompositeKey, IdCountPair, CompositeKey, Text> {
+public class MyReducer extends Reducer<CompositeKey, IdCountPair, Text, Text> {
 
 	@Override
 	protected void reduce(CompositeKey key, Iterable<IdCountPair> values, Context
@@ -16,6 +16,6 @@ public class MyReducer extends Reducer<CompositeKey, IdCountPair, CompositeKey, 
 		for (IdCountPair pair : values) {
 			output.append(pair.toString()).append(" ");
 		}
-		context.write(key, new Text(output.toString()));
+		context.write(new Text(key.toString()), new Text(output.toString()));
 	}
 }
