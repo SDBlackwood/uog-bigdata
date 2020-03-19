@@ -4,6 +4,7 @@ import org.apache.hadoop.io.Writable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Objects;
 
 public class IdCountPair implements Writable {
     private LongWritable documentId;
@@ -14,6 +15,14 @@ public class IdCountPair implements Writable {
     IdCountPair(LongWritable documentId, int count) {
         this.documentId = documentId;
         this.count = count;
+    }
+
+    public LongWritable getDocumentId() {
+        return documentId;
+    }
+
+    public int getCount() {
+        return count;
     }
 
     IdCountPair() {}
@@ -32,5 +41,19 @@ public class IdCountPair implements Writable {
     public void readFields(DataInput dataInput) throws IOException {
         this.documentId = new LongWritable(dataInput.readLong());
         this.count = dataInput.readInt();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IdCountPair)) return false;
+        IdCountPair that = (IdCountPair) o;
+        return count == that.count &&
+                documentId.equals(that.documentId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(documentId, count);
     }
 }
