@@ -1,3 +1,5 @@
+import models.CompositeKey;
+import models.IdCountPair;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -8,7 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class MyMapper extends Mapper<LongWritable, Text, CompositeKey, IdCountPair> {
+public class IndexMapper extends Mapper<LongWritable, Text, CompositeKey, IdCountPair> {
 
 	static enum Counters { NUM_DOCUMENTS, TOTAL_TOKENS }
 	Set<String> stopwords = new HashSet<>();

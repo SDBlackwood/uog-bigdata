@@ -1,3 +1,5 @@
+package models;
+
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Writable;
 
@@ -12,7 +14,7 @@ public class IdCountPair implements Writable {
 
     private static String stringSeparator = "|";
 
-    IdCountPair(LongWritable documentId, int count) {
+    public IdCountPair(LongWritable documentId, int count) {
         this.documentId = documentId;
         this.count = count;
     }
@@ -21,11 +23,11 @@ public class IdCountPair implements Writable {
         return documentId;
     }
 
-    public int getCount() {
+    public Integer getCount() {
         return count;
     }
 
-    IdCountPair() {}
+    public IdCountPair() {}
 
     public String toString () {
         return documentId.toString() + stringSeparator + count;

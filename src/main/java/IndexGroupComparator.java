@@ -1,9 +1,10 @@
+import models.CompositeKey;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
-public class MyGroupComparator extends WritableComparator {
+public class IndexGroupComparator extends WritableComparator {
 
-    public MyGroupComparator(){
+    public IndexGroupComparator(){
         super(CompositeKey.class, true);
     }
 

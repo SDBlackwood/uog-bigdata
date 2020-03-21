@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import java.io.IOException;
 import com.clearspring.analytics.stream.membership.DataOutputBuffer;
 
-public class MyRecordReader extends RecordReader<LongWritable, Text> {
+public class IndexRecordReader extends RecordReader<LongWritable, Text> {
 
 	final String pattern = ".*\\[\\[.*\\]\\].*";
 	private LongWritable key = new LongWritable();
@@ -37,7 +37,6 @@ public class MyRecordReader extends RecordReader<LongWritable, Text> {
 		this.lineReader = new LineReader(this.fsin, conf);
 		this.start = split.getStart();
 		this.end = split.getStart() + split.getLength();
-		fs.close();
 	}
 
 	/**
