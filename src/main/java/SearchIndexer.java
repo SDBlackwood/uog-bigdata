@@ -30,7 +30,6 @@ public class SearchIndexer extends Configured implements Tool {
         Job job = Job.getInstance(myconf, "WikiIndex-v0");
 
         job.setJarByClass(SearchIndexer.class);
-//        job.setInputFormatClass(IndexInputFormat.class);
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
