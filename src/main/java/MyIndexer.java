@@ -13,7 +13,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class SearchIndexer extends Configured implements Tool {
+public class MyIndexer extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
         Configuration myconf = getConf();
@@ -29,7 +29,7 @@ public class SearchIndexer extends Configured implements Tool {
 
         Job job = Job.getInstance(myconf, "WikiIndex-v0");
 
-        job.setJarByClass(SearchIndexer.class);
+        job.setJarByClass(MyIndexer.class);
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
@@ -51,6 +51,6 @@ public class SearchIndexer extends Configured implements Tool {
         return (job.waitForCompletion(true) ? 0 : 1);
     }
     public static void main(String[] args) throws Exception {
-        System.exit(ToolRunner.run(new Configuration(), new SearchIndexer(), args));
+        System.exit(ToolRunner.run(new Configuration(), new MyIndexer(), args));
     }
 }
