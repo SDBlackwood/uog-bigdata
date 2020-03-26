@@ -6,6 +6,7 @@ import org.apache.hadoop.io.WritableComparable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.UTFDataFormatException;
 import java.util.Objects;
 
 public class CompositeKey implements WritableComparable<CompositeKey> {
@@ -72,9 +73,9 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
     }
 
     public String getTerm() {
-        // Truncate the term to 65535 - otherwise throws an exception DataOutputStream
-        return (term.getBytes().length > 65535) ? new String(term.getBytes(),0, 65535 - 2) : term;
+        return term;
     }
+
 
     public String toString() {
         StringBuilder output = new StringBuilder();
@@ -107,7 +108,12 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
         if (this.getKeyType() == KeyType.DOCUMENT) {
             dataOutput.writeLong(this.getDocumentId().get());
         } else {
-            dataOutput.writeUTF(this.getTerm());
+            try {
+                dataOutput.writeUTF(this.getTerm());
+            }catch (UTFDataFormatException e){
+                // Truncate the term to 65535
+                dataOutput.writeUTF(new String(this.getTerm().getBytes("UTF-8"), 0, 65535 - 2, "UTF-8"));
+            }
         }
     }
 
