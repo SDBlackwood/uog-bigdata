@@ -1,14 +1,16 @@
 import models.CompositeKey;
 import models.IdCountPair;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import utils.PorterStemmer;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
+import org.apache.hadoop.fs.FileSystem;
 
 public class IndexMapper extends Mapper<LongWritable, Text, CompositeKey, IdCountPair> {
 
@@ -18,7 +20,13 @@ public class IndexMapper extends Mapper<LongWritable, Text, CompositeKey, IdCoun
 
 	@Override
 	protected void setup(Context context) throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(new FileReader("src/main/resources/stopword-list.txt"));
+
+		//String pathString = "hdfs://bigdata-10.dcs.gla.ac.uk:8022/user/2092282b/stopword-list.txt";
+		String pathString = "src/main/resources/stopword-list.txt";
+		Path path = new Path(pathString);
+		FileSystem fs = FileSystem.get(context.getConfiguration());
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fs.open(path)));
+
 		String word;
 
 		while((word = bufferedReader.readLine()) != null) {

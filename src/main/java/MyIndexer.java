@@ -27,7 +27,7 @@ public class MyIndexer extends Configured implements Tool {
 
         myconf.set("textinputformat.record.delimiter", "\n[[");
 
-        Job job = Job.getInstance(myconf, "WikiIndex-v0");
+        Job job = Job.getInstance(myconf, "WikiIndex");
 
         job.setJarByClass(MyIndexer.class);
         job.setInputFormatClass(TextInputFormat.class);
