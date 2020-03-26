@@ -112,7 +112,7 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
                 dataOutput.writeUTF(this.getTerm());
             }catch (UTFDataFormatException e){
                 // Truncate the term to 65535
-                dataOutput.writeUTF(new String(this.getTerm().getBytes(),0, 65535 - 2));
+                dataOutput.writeUTF(new String(this.getTerm().getBytes("UTF-8"), 0, 65535 - 2, "UTF-8"));
             }
         }
     }
