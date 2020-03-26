@@ -72,7 +72,7 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
     }
 
     public String getTerm() {
-        return term;
+        return (term.getBytes().length > 65535) ? new String(term.getBytes(),0, 65535 - 2) : term;
     }
 
     public String toString() {
