@@ -72,6 +72,7 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
     }
 
     public String getTerm() {
+        // Truncate the term to 65535 - otherwise throws an exception DataOutputStream
         return (term.getBytes().length > 65535) ? new String(term.getBytes(),0, 65535 - 2) : term;
     }
 
