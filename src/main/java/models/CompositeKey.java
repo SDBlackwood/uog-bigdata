@@ -78,6 +78,7 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
 
     @Override
     public int compareTo(CompositeKey o) {
+        // Documents come before terms, and the default ordering applies within categories
         if (this.getKeyType() == KeyType.DOCUMENT && o.getKeyType() == KeyType.TERM) {
             return -1;
         } else if (this.getKeyType() == KeyType.TERM && o.getKeyType() == KeyType.DOCUMENT) {
@@ -98,8 +99,10 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
             try {
                 dataOutput.writeUTF(this.getTerm());
             }catch (UTFDataFormatException e){
-                // Truncate the term to 65535
-                dataOutput.writeUTF(new String(this.getTerm().getBytes("UTF-8"), 0, 65535 - 2, "UTF-8"));
+                // Truncate the term to 65535 - the maximum for Writable
+                dataOutput.writeUTF(
+                        new String(this.getTerm().getBytes(StandardCharsets.UTF_8), 0, 65535 - 2, StandardCharsets.UTF_8)
+                );
             }
         }
     }

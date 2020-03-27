@@ -19,6 +19,7 @@ public class IndexReducer extends Reducer<CompositeKey, IdCountPair, Text, Text>
 	protected void reduce(CompositeKey key, Iterable<IdCountPair> values, Context
 			context) throws IOException, InterruptedException {
 
+		// We use a slightly different output format and a different output file depending on the key type
 		if (key.getKeyType() == CompositeKey.KeyType.TERM && !key.getTerm().equals("")) {
 			this.reduceTerm(key.getTerm(), values);
 		} else if (key.getKeyType() == CompositeKey.KeyType.DOCUMENT) {
@@ -27,7 +28,7 @@ public class IndexReducer extends Reducer<CompositeKey, IdCountPair, Text, Text>
 	}
 
 	private void reduceDocument(LongWritable documentId, Integer count) throws IOException, InterruptedException {
-
+		// Don't output the document ID twice
 		multipleOutputs.write("documents", new Text(documentId.toString()), new Text(count.toString()));
 	}
 

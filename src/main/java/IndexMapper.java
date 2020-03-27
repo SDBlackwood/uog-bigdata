@@ -29,6 +29,7 @@ public class IndexMapper extends Mapper<LongWritable, Text, CompositeKey, IdCoun
 
 		String word;
 
+		// Store the stopwords in a set for fast lookups
 		while((word = bufferedReader.readLine()) != null) {
 			this.stopwords.add(word);
 		}
@@ -37,11 +38,13 @@ public class IndexMapper extends Mapper<LongWritable, Text, CompositeKey, IdCoun
 
 	@Override
 	protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+		// The default tokenizer splits by whitespace which works for our use case
 		StringTokenizer tokenizer = new StringTokenizer(value.toString());
 
 		Map<CompositeKey, Integer> termCounts = new HashMap<>();
 		int documentLength = 0;
 
+		// Go through the document and map processed tokens to their counts
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
 
@@ -57,11 +60,14 @@ public class IndexMapper extends Mapper<LongWritable, Text, CompositeKey, IdCoun
 
 		}
 
+		// Global metrics needed for BM25
 		context.getCounter(Counters.TOTAL_TOKENS).increment(documentLength);
 		context.getCounter(Counters.NUM_DOCUMENTS).increment(1);
 
+		// Write document lengths
 		context.write(new CompositeKey(key), new IdCountPair(key, documentLength));
 
+		// Write term occurrences
 		for (CompositeKey termKey : termCounts.keySet()) {
 			context.write(termKey, new IdCountPair(key, termCounts.get(termKey)));
 		}
@@ -69,6 +75,7 @@ public class IndexMapper extends Mapper<LongWritable, Text, CompositeKey, IdCoun
 
 	private String processWord(String word) {
 		String normalisedWord = this.stripWord(word.toLowerCase());
+		// Check for stopwords before stemming
 		if (this.stopwords.contains(normalisedWord)) {
 			return null;
 		}
