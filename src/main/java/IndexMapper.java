@@ -21,7 +21,7 @@ public class IndexMapper extends Mapper<LongWritable, Text, CompositeKey, IdCoun
 	@Override
 	protected void setup(Context context) throws IOException {
 
-		//String pathString = "hdfs://bigdata-10.dcs.gla.ac.uk:8022/user/2092282b/stopword-list.txt";
+		//String pathString = "hdfs://bigdata-10.dcs.gla.ac.uk:8020/user/2092282b/stopword-list.txt";
 		String pathString = "src/main/resources/stopword-list.txt";
 		Path path = new Path(pathString);
 		FileSystem fs = FileSystem.get(context.getConfiguration());
