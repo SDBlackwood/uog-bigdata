@@ -7,6 +7,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.UTFDataFormatException;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class CompositeKey implements WritableComparable<CompositeKey> {
