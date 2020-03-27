@@ -36,21 +36,8 @@ public class CompositeKey implements WritableComparable<CompositeKey> {
     private LongWritable documentId;
     private String term;
 
-    public CompositeKey(KeyType keyType, LongWritable documentId, String term) {
-        this.keyType = keyType;
-
-        if (keyType == KeyType.DOCUMENT) {
-            this.documentId = documentId;
-            this.term = null;
-        } else if (keyType == KeyType.TERM) {
-            this.term = term;
-            this.documentId = null;
-        }
-    }
-
-    public CompositeKey() {
-
-    }
+    // This constructor is needed for the framework
+    public CompositeKey() { }
 
     public CompositeKey(String term) {
         this.keyType = KeyType.TERM;
